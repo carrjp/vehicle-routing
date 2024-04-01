@@ -5,11 +5,12 @@ import math
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
-MAX_DRIVING_TIME_MINUTES = 12 * 60
-MAX_DRIVING_TIME_MILLISECONDS = MAX_DRIVING_TIME_MINUTES * 60 * 1000
+MAX_DRIVING_TIME_MILLISECONDS = 12 * 60 * 60 * 1000
 MAX_ROUTING_TIME_SECONDS = 29
 MAX_DRIVERS = 1_000
 SPAN_COST_COEFFICIENT = 0
+FIRST_SOLUTION_STRATEGY = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+LOCAL_SEARCH_METAHEURISTIC = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
 
 
 class Point:
@@ -271,12 +272,8 @@ if __name__ == '__main__':
 
         # Setting first solution heuristic.
         search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-        search_parameters.first_solution_strategy = (
-            routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-        )
-        search_parameters.local_search_metaheuristic = (
-            routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
-        )
+        search_parameters.first_solution_strategy = FIRST_SOLUTION_STRATEGY
+        search_parameters.local_search_metaheuristic = LOCAL_SEARCH_METAHEURISTIC
         search_parameters.time_limit.FromSeconds(MAX_ROUTING_TIME_SECONDS)
 
     # Solve the problem.
