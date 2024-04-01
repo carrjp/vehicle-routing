@@ -131,6 +131,13 @@ def print_solution(data, manager, routing, solution, loads, verbose=False):
             print(route)
 
 
+
+def print_naive_solution(loads):
+    """Prints naive solution to console."""
+    for load in loads:
+        print([load.id])
+
+
 def get_loads_from_file(filePath: str) -> list[Load]:
     """Parses the contents of the input file and returns a list of Loads."""
     f = open(filePath, "r")
@@ -265,7 +272,7 @@ if __name__ == '__main__':
     solution = routing.SolveWithParameters(search_parameters)
 
     # Print solution on console.
-    if solution:
+    if routing.status() in [1, 2]:
         print_solution(data, manager, routing, solution, loads, args.verbose)
     else:
-        print(routing.status())
+        print_naive_solution(loads)
