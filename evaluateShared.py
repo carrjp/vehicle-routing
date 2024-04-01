@@ -74,6 +74,7 @@ def loadSolutionFromString(solutionStr):
             return schedules, "Solution format incorrect. Expected all lines to be in format [{load_id}, {load_id}, ...], but got this: " + line
         line = line.replace('[','')
         line = line.replace(']','')
+        line = line.replace('\r','')
         line = line.replace('\n','')
         line = line.replace(' ','')
         splits = line.split(',')
@@ -131,7 +132,7 @@ def getSolutionCost(problem, solutionSchedules):
     for idx, schedule in enumerate(solutionSchedules):
         scheduleMinutes = getDistanceOfScheduleWithReturnHome(schedule, loadByID)
         if scheduleMinutes > 12*60:
-            return 0, print("schedule idx " + str(idx) + " is invalid: driver runs for " + str(scheduleMinutes) + " minutes")
+            return 0, print("schedule idx " + str(idx) + " is invalid: driver runs for " + str(scheduleMinutes) + " minutes. Failed schedule: " + str(schedule))
         totalDrivenMinutes += scheduleMinutes
     
     return 500*len(solutionSchedules) + totalDrivenMinutes, ""
