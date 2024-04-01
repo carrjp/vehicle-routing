@@ -5,7 +5,8 @@ import math
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
-MAX_DRIVING_TIME_MINUTES = 720
+MAX_DRIVING_TIME_MINUTES = 12 * 60
+MAX_DRIVING_TIME_MILLISECONDS = MAX_DRIVING_TIME_MINUTES * 60 * 1000
 MAX_ROUTING_TIME_SECONDS = 29
 MAX_DRIVERS = 1_000
 SPAN_COST_COEFFICIENT = 0
@@ -42,6 +43,16 @@ def euclidean_distance(x1, y1, x2, y2):
     return math.sqrt(xDiff * xDiff + yDiff * yDiff)
 
 
+def minutes_to_milliseconds(x: float) -> int:
+    """Converts minutes floating point value to milliseconds integer."""
+    return math.ceil(x * 60 * 1000)
+
+
+def milliseconds_to_minutes(x: int) -> float:
+    """Converts minutes floating point value to milliseconds integer."""
+    return float(x / 60 / 1000)
+
+
 def create_data_model(loads: list[Load]) -> dict:
     """Creates model of all data related to input loads including adjacency matrix, pickup and dropoff IDs, etc."""
     data = {
@@ -67,7 +78,7 @@ def create_data_model(loads: list[Load]) -> dict:
     for i in range(len(ids_points)):
         distances = []
         for j in range(len(ids_points)):
-            distances.append(math.ceil(euclidean_distance(*ids_points[i], *ids_points[j])))
+            distances.append(minutes_to_milliseconds(euclidean_distance(*ids_points[i], *ids_points[j])))
         data["distance_matrix"].append(distances)
 
     return data
@@ -118,9 +129,9 @@ def print_solution(data, manager, routing, solution, loads, verbose=False):
             plan_output += f" {manager.IndexToNode(index)} -> "
             previous_index = index
             index = solution.Value(routing.NextVar(index))
-            route_distance += routing.GetArcCostForVehicle(
+            route_distance += milliseconds_to_minutes(routing.GetArcCostForVehicle(
                 previous_index, index, vehicle_id
-            )
+            ))
         plan_output += f"{manager.IndexToNode(index)}\n"
         plan_output += f"{route}\n"
         plan_output += f"Distance of the route: {route_distance}m\n"
@@ -220,7 +231,7 @@ if __name__ == '__main__':
     routing.AddDimension(
         transit_callback_index,
         0,  # no slack
-        MAX_DRIVING_TIME_MINUTES,  # vehicle maximum travel distance
+        MAX_DRIVING_TIME_MILLISECONDS,  # vehicle maximum travel distance
         True,  # start cumul to zero
         dimension_name,
     )
