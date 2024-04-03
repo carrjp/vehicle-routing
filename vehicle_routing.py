@@ -39,18 +39,18 @@ class Load:
 
 def euclidean_distance(x1, y1, x2, y2):
     """Computes Euclidean distance given the x and y coordinates of two points."""
-    xDiff = x1 - x2
-    yDiff = y1 - y2
-    return math.sqrt(xDiff * xDiff + yDiff * yDiff)
+    x_diff = x1 - x2
+    y_diff = y1 - y2
+    return math.sqrt(x_diff * x_diff + y_diff * y_diff)
 
 
 def minutes_to_milliseconds(x: float) -> int:
-    """Converts minutes floating point value to milliseconds integer."""
+    """Converts floating point minutes value to integer milliseconds."""
     return math.ceil(x * 60 * 1000)
 
 
 def milliseconds_to_minutes(x: int) -> float:
-    """Converts minutes floating point value to milliseconds integer."""
+    """Converts integer minutes value to floating point milliseconds."""
     return float(x / 60 / 1000)
 
 
@@ -141,7 +141,6 @@ def print_solution(data, manager, routing, solution, loads, verbose=False):
             if verbose:
                 print(plan_output)
             print(route)
-
 
 
 def print_naive_solution(loads):
